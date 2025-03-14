@@ -2,49 +2,55 @@ import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
-import java.util.HashMap;
-import java.util.Map;
-
+import java.util.*;
 
 public class App {
     public static void main(String[] args) throws Exception {
         File file = new File("src/codigo.txt");
         String code = lerTXT(file.getAbsolutePath());
         String[] codeSplitado = code.split("\n");
-    
         Map<String, String[]> grammarRules = gerarDicionario(codeSplitado);
-        for (Map.Entry<String, String[]> entry : grammarRules.entrySet()) {
-            if (entry.getValue().length > 1) {
-                System.out.print(entry.getKey() + " -> ");
-                for (String aux : entry.getValue()) {
-                    System.out.print(aux + " | ");
-                }
-                System.out.println();
-            } else
-            System.out.println(entry.getKey() + " -> " + entry.getValue()[0]);
-        }
-        gerarFirst(grammarRules);
+
+        Map<String, Set<String>> first = gerarFirst(grammarRules);
+        
     }
-
     
-    
-    public static void gerarFirst(Map<String, String[]> grammarRules) {
-        Map<String, String[]> first = new HashMap<>();
+    public static Map<String, Set<String>> gerarFirst(Map<String, String[]> grammarRules) {
+        Map<String, Set<String>> first = new HashMap<>();
+        do{
+            for (Map.Entry<String, String[]> entry : grammarRules.entrySet()) {
+                String key = entry.getKey();
+                String[] values = entry.getValue();
+                Set<String> aux = new HashSet<>();
+                
+                for (String value : values) {
+                    if (grammarRules.containsKey(value.charAt(0))){
 
-        for (Map.Entry<String, String[]> entry : grammarRules.entrySet()) {
-            String[] aux = new String[entry.getValue().length];
-            for (int i = 0; i < entry.getValue().length; i++) {
-                System.out.println(entry.getKey());
-                String[] parts = entry.getValue()[i].split(" ");
-                if (parts[0].equals("epsilon")) {
-                    aux[i] = "epsilon";
-                } else {
-                    aux[i] = parts[0];
+                    }
+
+
+
+
+
+
+                    if (value.length() > 1 && grammarRules.containsKey(value.charAt(0) + "" + value.charAt(1))) {
+                        Set<String> aux2 = first.get(value);
+                        aux.addAll(aux2);
+                        if (aux2.contains("epsilon")) {
+                            aux.remove("epsilon");
+                            aux.addAll(aux2);
+                        }
+                    }else{
+
+                    }
+
                 }
+                first.put(key, aux);
             }
-            first.put(entry.getKey(), aux);
-        }
- 
+
+
+        }while(first.size() != grammarRules.size());
+        return first;
     }
     
     public static String lerTXT(String caminho) {
