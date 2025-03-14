@@ -10,12 +10,8 @@ public class App {
     public static void main(String[] args) throws Exception {
         File file = new File("src/codigo.txt");
         String code = lerTXT(file.getAbsolutePath());
-        System.out.println(code);
         String[] codeSplitado = code.split("\n");
-    
-        for (String aux : codeSplitado) {
-            System.out.println(aux);
-        }
+
     
         Map<String, String> grammarRules = gerarDicionario(codeSplitado);
         for (Map.Entry<String, String> entry : grammarRules.entrySet()) {
@@ -23,9 +19,6 @@ public class App {
         }
     }
 
-    
-    
-    
     public static Map<String, String> gerarDicionario(String[] codeSplitado) {
         Map<String, String> grammarRules = new HashMap<>();
         
