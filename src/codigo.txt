@@ -1,4 +1,5 @@
-E -> E'T
-E' -> T | vazio
-T -> (10)
-T' -> +122212 | vazio
+E -> TE'
+E' -> +TE' | #
+T -> FT'
+T' -> *FT' | #
+F -> id | (E)
