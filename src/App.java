@@ -5,6 +5,7 @@ import java.nio.file.Paths;
 import java.util.*;
 
 public class App {
+    // teste
     public static void main(String[] args) throws Exception {
         File file = new File("src/codigo.txt");
         String code = lerTXT(file.getAbsolutePath());
