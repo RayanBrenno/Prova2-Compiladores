@@ -4,7 +4,7 @@ import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.*;
 
-public class MainGlc {  
+public class Main {  
     public static void main(String[] args) throws Exception {
         File file = new File("src/glc.txt");
         String code = lerTXT(file.getAbsolutePath());
@@ -157,14 +157,8 @@ public class MainGlc {
         simbolosDeEntrada.remove("#");
         System.out.println(simbolosDeEntrada);
 
-
         String[][] tabela = new String[grammarRules.size()][simbolosDeEntrada.size()];
 
-        for (int i = 0; i < grammarRules.size(); i++) {
-            for (int j = 0; j < first.size(); j++) {
-                tabela[i][j] = "";
-            }
-        }
         return tabela;
     }   
 

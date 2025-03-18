@@ -1,3 +1,4 @@
+package Tokenizador;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
@@ -9,24 +10,9 @@ import java.util.Map;
 
 public class MainTokenizer {
 
-    public static String lerTXT(String caminho) {
-
-        String texto = "";
-        try (BufferedReader br = new BufferedReader(new FileReader(caminho))) {
-            String linha;
-            while ((linha = br.readLine()) != null) {
-                texto += linha;
-            }
-        } catch (IOException e) {
-            System.out.println("Erro ao ler o arquivo: " + e.getMessage());
-        }
-
-        return texto;
-    }
-
     public static void main(String[] args) {
 
-        File file = new File("src/codigo.txt");
+        File file = new File("src/Tokenizador/codigo.txt");
         String code = lerTXT(file.getAbsolutePath());
         System.out.println(code);
         Map<String, Tokenizer> tabelaDeSimbolos = new LinkedHashMap<>();
@@ -48,6 +34,20 @@ public class MainTokenizer {
         }
 
         System.out.println("\n" + Arrays.toString(codeTokenizado));
+    }
 
+    public static String lerTXT(String caminho) {
+
+        String texto = "";
+        try (BufferedReader br = new BufferedReader(new FileReader(caminho))) {
+            String linha;
+            while ((linha = br.readLine()) != null) {
+                texto += linha;
+            }
+        } catch (IOException e) {
+            System.out.println("Erro ao ler o arquivo: " + e.getMessage());
+        }
+
+        return texto;
     }
 }
