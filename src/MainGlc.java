@@ -4,10 +4,9 @@ import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.*;
 
-public class App {
-    // teste na maquina luan    
+public class MainGlc {  
     public static void main(String[] args) throws Exception {
-        File file = new File("src/codigo.txt");
+        File file = new File("src/glc.txt");
         String code = lerTXT(file.getAbsolutePath());
         String[] codeSplitado = code.split("\n");
         Map<String, String[]> grammarRules = gerarDicionario(codeSplitado);
