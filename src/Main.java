@@ -30,6 +30,11 @@ public class Main {
         do {
             for (Map.Entry<String, String[]> entry : grammarRules.entrySet()) {
                 String key = entry.getKey();
+
+                if (first.containsKey(key)) {
+                    continue; // Pula se o elemento já foi processado
+                }
+
                 String[] values = entry.getValue();
                 Set<String> aux = new HashSet<>();
                 boolean flag = true;
@@ -68,11 +73,10 @@ public class Main {
         do {
             boolean toPutFinalCaracter = true;
             for (Map.Entry<String, String[]> entry : grammarRules.entrySet()) {
-                // se ja tem pula
-                if (follow.containsKey(entry.getKey())) {
-                    continue;
-                }
                 String key = entry.getKey();
+                if (follow.containsKey(key)) {
+                    continue; // Pula se o elemento já foi processado
+                }
                 Set<String> aux = new HashSet<>();
                 if (toPutFinalCaracter) {
                     aux.add("$");
@@ -107,7 +111,7 @@ public class Main {
                                 // Se houver uma produção 𝐴 → 𝛼𝐵𝛽 , então tudo em 𝐹𝐼𝑅𝑆𝑇(𝛽) exceto 𝜺 está em 𝐹𝑂𝐿𝐿𝑂𝑊(𝐵);
                                 aux.addAll(first.get(nextElement));
 
-                                // Se houver uma produção 𝐴 → 𝛼𝐵, ou 𝐴 → 𝛼𝐵𝛽, onde o 𝐹𝐼𝑅𝑆𝑇(𝛽) possui 𝜺, então inclua 𝐹𝑂𝐿𝐿𝑂𝑊(𝐴) em 𝐹𝑂𝐿𝐿𝑂𝑊(𝐵);
+                                // Regra 3 : Se houver uma produção 𝐴 → 𝛼𝐵, ou 𝐴 → 𝛼𝐵𝛽, onde o 𝐹𝐼𝑅𝑆𝑇(𝛽) possui 𝜺, então inclua 𝐹𝑂𝐿𝐿𝑂𝑊(𝐴) em 𝐹𝑂𝐿𝐿𝑂𝑊(𝐵);
                                 if (first.get(nextElement).contains("#")) {
                                     if (follow.containsKey(key2)) {
                                         aux.addAll(follow.get(key2));
@@ -120,7 +124,7 @@ public class Main {
                                 aux.add(nextElement);
                             }
                         } else {
-                            // Se houver uma produção 𝐴 → 𝛼𝐵, ou 𝐴 → 𝛼𝐵𝛽, onde o 𝐹𝐼𝑅𝑆𝑇(𝛽) possui 𝜺, então inclua 𝐹𝑂𝐿𝐿𝑂𝑊(𝐴) em 𝐹𝑂𝐿𝐿𝑂𝑊(𝐵);
+                            // Regra 3 : Se houver uma produção 𝐴 → 𝛼𝐵, ou 𝐴 → 𝛼𝐵𝛽, onde o 𝐹𝐼𝑅𝑆𝑇(𝛽) possui 𝜺, então inclua 𝐹𝑂𝐿𝐿𝑂𝑊(𝐴) em 𝐹𝑂𝐿𝐿𝑂𝑊(𝐵);
                             if (!key.equals(key2)) {
                                 if (follow.containsKey(key2)) {
                                     aux.addAll(follow.get(key2));
