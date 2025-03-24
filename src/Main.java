@@ -29,14 +29,13 @@ public class Main {
 
         Map<String, Set<String>> first = gerarFirst(grammarRules);
         for (Map.Entry<String, Set<String>> entry : first.entrySet()) {
-            System.out.println(entry.getKey() + " -> " + entry.getValue());
+            System.out.println(entry.getKey() + " -> " + new TreeSet<>(entry.getValue()));
         }
 
-    
         Map<String, Set<String>> follow = gerarFollow(grammarRules, first);
         System.out.println("\n");
         for (Map.Entry<String, Set<String>> entry : follow.entrySet()) {
-            System.out.println(entry.getKey() + " -> " + entry.getValue());
+            System.out.println(entry.getKey() + " -> " + new TreeSet<>(entry.getValue()));
         }
 
     }
@@ -134,7 +133,6 @@ public class Main {
                                 // Regra 3 : Se houver uma produção 𝐴 → 𝛼𝐵, ou 𝐴 → 𝛼𝐵𝛽, onde o 𝐹𝐼𝑅𝑆𝑇(𝛽) possui 𝜺, então inclua 𝐹𝑂𝐿𝐿𝑂𝑊(𝐴) em 𝐹𝑂𝐿𝐿𝑂𝑊(𝐵);
                                 if (first.get(nextElement).contains("#")) {
                                     if (follow.get(key2).size() == 0) {
-                                        System.out.println("entrou");
                                         flag = false;
                                         break;
                                     } 
@@ -146,12 +144,11 @@ public class Main {
                         } else {
                             // Regra 3 : Se houver uma produção 𝐴 → 𝛼𝐵, ou 𝐴 → 𝛼𝐵𝛽, onde o 𝐹𝐼𝑅𝑆𝑇(𝛽) possui 𝜺, então inclua 𝐹𝑂𝐿𝐿𝑂𝑊(𝐴) em 𝐹𝑂𝐿𝐿𝑂𝑊(𝐵);
                             if (!key.equals(key2)) {
-                                if (follow.containsKey(key2)) {
-                                    aux.addAll(follow.get(key2));
-                                } else {
-                                    flag2 = false;
+                                if (follow.get(key2).size() == 0) {
+                                    flag = false;
                                     break;
-                                }
+                                } 
+                                aux.addAll(follow.get(key2));
                             }
                         }
                     }

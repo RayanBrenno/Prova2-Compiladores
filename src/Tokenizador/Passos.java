@@ -7,7 +7,7 @@ public class Passos {
 
     public static ArrayList<String> separarTexto(String code, Map<String, Tokenizer> tabelaDeSimbolos) {
 
-        Map<String, String> dicSimbolos = new HashMap<>() {
+        Map<String, String> dicSimbolos = new HashMap<String, String>() {
             {
                 put("=", "SYM_EQUAL");
                 put(";", "SYM_PV");
@@ -81,7 +81,7 @@ public class Passos {
 
     public static Tokenizer gerarObjeto(Map<String, Tokenizer> tabelaDeSimbolos, String lexema) {
 
-        Map<String, String> dicTiposVariaveis = new HashMap<>() {
+        Map<String, String> dicTiposVariaveis = new HashMap<String, String>() {
             {
                 put("int", "KW_INT");
                 put("char", "KW_CHAR");
