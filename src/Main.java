@@ -6,7 +6,8 @@ import java.util.*;
 
 public class Main {  
     public static void main(String[] args) throws Exception {
-        File file = new File("src/glc.txt");
+        /* 
+        File file = new File("src/glcExemploSlide.txt");
         String code = lerTXT(file.getAbsolutePath());
         String[] codeSplitado = code.split("\n");
         Map<String, String[]> grammarRules = gerarDicionario(codeSplitado);
@@ -20,105 +21,124 @@ public class Main {
         for (Map.Entry<String, Set<String>> entry : follow.entrySet()) {
             System.out.println(entry.getKey() + " -> " + entry.getValue());
         }
-        
-        String[][] tabela = gerarTabela(grammarRules, first, follow);
+        */
+        File file = new File("src/glcFinal.txt");
+        String code = lerTXT(file.getAbsolutePath());
+        String[] codeSplitado = code.split("\n");
+        Map<String, String[]> grammarRules = gerarDicionario(codeSplitado);
+
+        Map<String, Set<String>> first = gerarFirst(grammarRules);
+        for (Map.Entry<String, Set<String>> entry : first.entrySet()) {
+            System.out.println(entry.getKey() + " -> " + entry.getValue());
+        }
+
+    
+        Map<String, Set<String>> follow = gerarFollow(grammarRules, first);
+        System.out.println("\n");
+        for (Map.Entry<String, Set<String>> entry : follow.entrySet()) {
+            System.out.println(entry.getKey() + " -> " + entry.getValue());
+        }
 
     }
 
     public static Map<String, Set<String>> gerarFirst(Map<String, String[]> grammarRules) {
         Map<String, Set<String>> first = new LinkedHashMap<>();
+        for (String key : grammarRules.keySet()) {
+            first.put(key, new HashSet<>());
+        }
+        boolean changed;
+
         do {
+            changed = false;
             for (Map.Entry<String, String[]> entry : grammarRules.entrySet()) {
                 String key = entry.getKey();
-
-                if (first.containsKey(key)) {
-                    continue; // Pula se o elemento já foi processado
-                }
-
                 String[] values = entry.getValue();
                 Set<String> aux = new HashSet<>();
+                // se ta foi atulizado pula
+                if (first.get(key).size() != 0)
+                    continue;
                 boolean flag = true;
-                for (String value : values) {
-                    if (grammarRules.containsKey(String.valueOf(value.charAt(0)))) {
-                        String aux2 = String.valueOf(value.charAt(0));
-                        if (value.length() > 1 && grammarRules.containsKey(aux2 + String.valueOf(value.charAt(1)))) {
-                            aux2 = aux2 + "'";
-                        }
 
-                        if (first.containsKey(aux2)) {
-                            aux.addAll(first.get(aux2));
-                        } else {
+                for (String value : values) {
+                    int cont = 0;
+                    String parar = "ABCDEFGHIJKLMNOPQRSTUVWXYZ+-*/=(){}[];,";
+                    String firstElement = String.valueOf(value.charAt(cont++));
+                    while (cont < value.length() && !parar.contains(String.valueOf(value.charAt(cont)))) {
+                        firstElement += String.valueOf(value.charAt(cont++));
+                    }
+                    if (grammarRules.containsKey(firstElement)) {
+                        if (first.get(firstElement).size() == 0) {
                             flag = false;
                             break;
-                        }
+                        } 
+                        aux.addAll(first.get(firstElement));
                     } else {
-                        if (value.equals("id")) {
-                            aux.add("id");
-                        } else
-                            aux.add(String.valueOf(value.charAt(0)));
+                        aux.add(firstElement);
                     }
-
                 }
                 if (flag) {
                     first.put(key, aux);
+                    changed = true;
                 }
             }
-        } while (first.size() != grammarRules.size());
+        } while (changed);
         return first;
     }
 
-    public static Map<String, Set<String>> gerarFollow(Map<String, String[]> grammarRules,
-            Map<String, Set<String>> first) {
+    public static Map<String, Set<String>> gerarFollow(Map<String, String[]> grammarRules, Map<String, Set<String>> first) {
         Map<String, Set<String>> follow = new LinkedHashMap<>();
+        for (String key : grammarRules.keySet()) {
+            follow.put(key, new HashSet<>());
+        }
+        boolean changed;
+
         do {
+            changed = false;
             boolean toPutFinalCaracter = true;
             for (Map.Entry<String, String[]> entry : grammarRules.entrySet()) {
                 String key = entry.getKey();
-                if (follow.containsKey(key)) {
-                    continue; // Pula se o elemento já foi processado
-                }
                 Set<String> aux = new HashSet<>();
                 if (toPutFinalCaracter) {
                     aux.add("$");
                     toPutFinalCaracter = false;
                 }
+                // se ta foi atulizado pula
+                if (follow.get(key).size() != 0)
+                    continue;
                 boolean flag = true;
 
                 for (Map.Entry<String, String[]> entry2 : grammarRules.entrySet()) {
                     String key2 = entry2.getKey();
                     String[] values2 = entry2.getValue();
                     boolean flag2 = true;
+
                     for (String value : values2) {
                         // se nao tem o key na produção pula
                         if (!value.contains(key)) {
                             continue;
                         }
-
                         Integer index = value.lastIndexOf(key);
-                        if (key.length() == 1 && String.valueOf(value.charAt(index + 1)).equals("'") ) {
-                            continue;
-                        }
-                        if (key.length() > 1){
-                            index++;
-                        }
+                        index += key.length();
 
-                        if (value.length() > index + 1) {
-                            String nextElement = String.valueOf(value.charAt(index + 1));
+                        if (value.length() > index) {
+                            String parar = "ABCDEFGHIJKLMNOPQRSTUVWXYZ+-*/=(){}[];,";
+                            String nextElement = String.valueOf(value.charAt(index++));
+                            while (index < value.length() && !parar.contains(String.valueOf(value.charAt(index)))) {
+                                nextElement += String.valueOf(value.charAt(index++));
+                            }
+
                             if (grammarRules.containsKey(nextElement)) {
-                                if (value.length() > index + 2 && grammarRules.containsKey(nextElement + "'")) {
-                                    nextElement += "'";
-                                }
                                 // Se houver uma produção 𝐴 → 𝛼𝐵𝛽 , então tudo em 𝐹𝐼𝑅𝑆𝑇(𝛽) exceto 𝜺 está em 𝐹𝑂𝐿𝐿𝑂𝑊(𝐵);
                                 aux.addAll(first.get(nextElement));
 
                                 // Regra 3 : Se houver uma produção 𝐴 → 𝛼𝐵, ou 𝐴 → 𝛼𝐵𝛽, onde o 𝐹𝐼𝑅𝑆𝑇(𝛽) possui 𝜺, então inclua 𝐹𝑂𝐿𝐿𝑂𝑊(𝐴) em 𝐹𝑂𝐿𝐿𝑂𝑊(𝐵);
                                 if (first.get(nextElement).contains("#")) {
-                                    if (follow.containsKey(key2)) {
-                                        aux.addAll(follow.get(key2));
-                                    } else {
-                                        flag2 = false;
+                                    if (follow.get(key2).size() == 0) {
+                                        System.out.println("entrou");
+                                        flag = false;
                                         break;
-                                    }
+                                    } 
+                                    aux.addAll(follow.get(nextElement));
                                 }
                             } else {
                                 aux.add(nextElement);
@@ -141,13 +161,14 @@ public class Main {
                     }
                 }
                 if (flag) {
+                    changed = true;
                     if (aux.contains("#")) {
                         aux.remove("#");
                     }
                     follow.put(key, aux);
                 }
             }
-        } while (follow.size() != grammarRules.size());
+        } while (changed);
         return follow;
     }
 
@@ -194,6 +215,7 @@ public class Main {
             }
         }
         return grammarRules;
+
     }
 
     public static int encontrarIndice(String[] array, String simbolo) {

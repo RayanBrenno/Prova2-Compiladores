@@ -1,0 +1,22 @@
+S -> Declaracao;S | CondicionalS | Atribuicao;S | # 
+Declaracao -> Tipo_varLista_var   
+Lista_var -> VarResto | AtribuicaoResto
+Resto -> ,VarResto |,AtribuicaoResto | #  
+Atribuicao -> Var=Expr  
+Expr -> Const | Var | Eq 
+Const -> Numero | NumeroConst   
+Var -> LetraCaractere   
+Eq -> OperandoOperadorEq | Operando | (Eq)   
+Operando -> Const | Var   
+Operador -> operadores   
+Numero -> numeros   
+Letra -> letras   
+Caractere -> NumeroCaractere | LetraCaractere | Numero | Letra | #  
+Tipo_var -> int | char   
+Condicional -> if(Condicao)Bloco   
+Condicao -> Tipo_exprRelacionalTipo_expr  
+Tipo_expr -> Eq | Operando  
+Relacional -> relacionais   
+Bloco -> {Comando1} | Comando2
+Comando1 -> DeclaracaoComando1 | CondicionalComando1 | #   
+Comando2 -> Declaracao; | Atribuicao; | CondicionalComando2
