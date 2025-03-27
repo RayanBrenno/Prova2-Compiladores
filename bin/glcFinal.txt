@@ -11,7 +11,7 @@ Operando -> Const | Var
 Operador -> operadores   
 Numero -> numeros   
 Letra -> letras   
-Caractere -> NumeroCaractere | LetraCaractere | Numero | Letra | #  
+Caractere -> NumeroCaractere | LetraCaractere | #  
 Tipo_var -> int | char   
 Condicional -> if(Condicao)Bloco   
 Condicao -> Tipo_exprRelacionalTipo_expr  

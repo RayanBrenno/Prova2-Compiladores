@@ -6,37 +6,24 @@ import java.util.*;
 
 public class Main {  
     public static void main(String[] args) throws Exception {
-        /* 
         File file = new File("src/glcExemploSlide.txt");
         String code = lerTXT(file.getAbsolutePath());
         String[] codeSplitado = code.split("\n");
-        Map<String, String[]> grammarRules = gerarDicionario(codeSplitado);
 
+        Map<String, String[]> grammarRules = gerarDicionario(codeSplitado);
         Map<String, Set<String>> first = gerarFirst(grammarRules);
-        for (Map.Entry<String, Set<String>> entry : first.entrySet()) {
-            System.out.println(entry.getKey() + " -> " + entry.getValue());
-        }
-        System.out.println("\n");
         Map<String, Set<String>> follow = gerarFollow(grammarRules, first);
-        for (Map.Entry<String, Set<String>> entry : follow.entrySet()) {
-            System.out.println(entry.getKey() + " -> " + entry.getValue());
-        }
-        */
-        File file = new File("src/glcFinal.txt");
-        String code = lerTXT(file.getAbsolutePath());
-        String[] codeSplitado = code.split("\n");
-        Map<String, String[]> grammarRules = gerarDicionario(codeSplitado);
 
-        Map<String, Set<String>> first = gerarFirst(grammarRules);
         for (Map.Entry<String, Set<String>> entry : first.entrySet()) {
             System.out.println(entry.getKey() + " -> " + new TreeSet<>(entry.getValue()));
         }
 
-        Map<String, Set<String>> follow = gerarFollow(grammarRules, first);
         System.out.println("\n");
         for (Map.Entry<String, Set<String>> entry : follow.entrySet()) {
             System.out.println(entry.getKey() + " -> " + new TreeSet<>(entry.getValue()));
         }
+
+        Map<String, Set<String[]>> tabela = gerarTabela(first, follow);
 
     }
 
@@ -169,21 +156,30 @@ public class Main {
         return follow;
     }
 
-    public static String[][] gerarTabela(Map<String, String[]> grammarRules, Map<String, Set<String>> first, Map<String, Set<String>> follow) {
-        
-        Set<String> simbolosDeEntrada = new HashSet<>();
-        for (Map.Entry<String, Set<String>> entry : first.entrySet()) 
-            simbolosDeEntrada.addAll(entry.getValue());
-        for (Map.Entry<String, Set<String>> entry : follow.entrySet()) 
-            simbolosDeEntrada.addAll(entry.getValue());
-        simbolosDeEntrada.remove("#");
-        System.out.println(simbolosDeEntrada);
+    public static Map<String, Set<String[]>> gerarTabela(Map<String, Set<String>> first, Map<String, Set<String>> follow) {
+        Map<String, Set<String[]>> tabela = new LinkedHashMap<>();
+        Set<String> terminais = new HashSet<>();
+        for(Map.Entry<String, Set<String>> entry : first.entrySet()) {
+            for(String value : entry.getValue()) {
+                if(!value.equals("#")) {
+                    terminais.add(value);
+                }
+            }
+        }
+        for(Map.Entry<String, Set<String>> entry : follow.entrySet()) {
+            for(String value : entry.getValue()) {
+                if(!value.equals("#")) {
+                    terminais.add(value);
+                }
+            }
+        }
 
-        String[][] tabela = new String[grammarRules.size()][simbolosDeEntrada.size()];
+        
+        
+        System.out.println(terminais);
 
         return tabela;
-    }   
-
+    }
     public static String lerTXT(String caminho) {
         try {
             return new String(Files.readAllBytes(Paths.get(caminho)));
@@ -213,15 +209,6 @@ public class Main {
         }
         return grammarRules;
 
-    }
-
-    public static int encontrarIndice(String[] array, String simbolo) {
-        for (int i = 0; i < array.length; i++) {
-            if (array[i].equals(simbolo)) {
-                return i; 
-            }
-        }
-        return -1; 
     }
 
 }
