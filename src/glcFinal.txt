@@ -1,22 +1,42 @@
-S -> Declaracao;S | CondicionalS | Atribuicao;S | # 
-Declaracao -> Tipo_varLista_var   
-Lista_var -> VarResto | AtribuicaoResto
-Resto -> ,VarResto |,AtribuicaoResto | #  
-Atribuicao -> Var=Expr  
-Expr -> Const | Var | Eq 
-Const -> Numero | NumeroConst   
-Var -> LetraCaractere   
-Eq -> OperandoOperadorEq | Operando | (Eq)   
-Operando -> Const | Var   
-Operador -> operadores   
-Numero -> numeros   
-Letra -> letras   
-Caractere -> NumeroCaractere | LetraCaractere | #  
-Tipo_var -> int | char   
-Condicional -> if(Condicao)Bloco   
-Condicao -> Tipo_exprRelacionalTipo_expr  
-Tipo_expr -> Eq | Operando  
-Relacional -> relacionais   
-Bloco -> {Comando1} | Comando2
-Comando1 -> DeclaracaoComando1 | CondicionalComando1 | #   
-Comando2 -> Declaracao; | Atribuicao; | CondicionalComando2
+S -> Declaracao ; S | Condicional S | Atribuicao ; S | # 
+Declaracao -> int Lista_var_int | char Lista_var_char
+Lista_var_int -> Var Lista_var_prime_int
+Lista_var_char -> Var Lista_var_prime_char
+Lista_var -> Var Lista_var_prime
+Lista_var_prime_int -> Lista_var_resto_int | = Expr_int Lista_var_resto_int
+Lista_var_prime_char -> Lista_var_resto_char | = Expr_char Lista_var_resto_char
+Lista_var_resto_int -> , Lista_var_continuacao_int | #
+Lista_var_resto_char -> , Lista_var_continuacao_char | #
+Lista_var_continuacao_int -> Var Lista_var_continuacao_prime_int
+Lista_var_continuacao_char -> Var Lista_var_continuacao_prime_char
+Lista_var_continuacao_prime_int -> Lista_var_resto_int | = Expr_int Lista_var_resto_int  
+Lista_var_continuacao_prime_char -> Lista_var_resto_char | = Expr_char Lista_var_resto_char  
+Atribuicao -> Var = Expr_tipo
+Expr_tipo -> Expr_int | Expr_char
+Expr_int -> Expr_prefixo Expr_sufixo
+Expr_char -> ' Expr_char_continuacao '
+Expr_char_continuacao -> Num | Letra
+Expr_prefixo -> Const | Var | ( Eq )
+Expr_sufixo -> Operador Eq | #
+Const -> Num Const_resto  
+Const_resto -> Const | #
+Var -> Letra Caractere
+Eq -> Eq_prefixo Eq_sufixo
+Eq_prefixo -> Operando | ( Eq )
+Eq_sufixo -> Operador Eq | #
+Operando -> Const | Var  
+Operador -> + | - | * | /  
+Num -> 0 | 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9
+Letra -> a | b | c | d | e | f | g | h | i | j | k | l | m | n | o | p | q | r | s | t | u | v | w | x | y | z
+Caractere -> Num Caractere_num_opcao | Letra Caractere_letra_opcao | #
+Caractere_num_opcao -> Caractere
+Caractere_letra_opcao -> Caractere
+Condicional -> if ( Condicao ) Bloco 
+Condicao -> Tipo_expr Relacional Tipo_expr 
+Tipo_expr -> Tipo_expr_prefixo Tipo_expr_sufixo
+Tipo_expr_prefixo -> Operando | ( Eq )
+Tipo_expr_sufixo -> Operador Eq | #
+Relacional -> == | <= | >= | != | === | !== | > | <
+Bloco -> { Comandos } | Comando
+Comandos -> Declaracao ; Comandos | Condicional Comandos | # 
+Comando -> Declaracao ; | Atribuicao ; | Condicional Comando

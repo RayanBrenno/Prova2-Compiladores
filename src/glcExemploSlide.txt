@@ -1,5 +1,5 @@
-E -> TW
-W -> +TW | #
-T -> FX
-X -> *FX | #
-F -> (E) | id
+E -> T E'
+E' -> + T E' | #
+T -> F T'
+T' -> * F T' | #
+F -> ( E ) | id
