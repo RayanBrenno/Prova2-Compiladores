@@ -6,6 +6,9 @@ import java.util.*;
 
 public class Main {
     public static void main(String[] args) throws Exception {
+
+        // teste intellij
+
         File file = new File("src/glcFinal.txt");
         String code = lerTXT(file.getAbsolutePath());
         String[] codeSplitado = code.split("\n");
