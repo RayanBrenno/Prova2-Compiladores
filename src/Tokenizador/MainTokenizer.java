@@ -49,7 +49,7 @@ public class MainTokenizer {
 
         // Exibir codeSeparado
         System.out.println("Code Separado:");
-        System.out.println(codeSeparado);
+        System.out.println(codeSeparado+"\n");
 
 //        System.out.println("\nTabela de Simbolos:");
 //        for (String current : tabelaDeSimbolos.keySet()) {

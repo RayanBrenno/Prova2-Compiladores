@@ -8,14 +8,15 @@ import java.util.*;
 
 public class Main {
 //
-//    29/03
+//    30/03
 //    ALTERAÇÕES:
 //
 //    gerarFollow
 //    pegarNextElement não precisa mais
-//    linha 274 (gerarTabela)
+//    linha 289 (gerarTabela)
 //    MainTokenizer
 //    entrada para a pilha foi alterada → números passados por cada dígito (134 → 1,3,4)
+//    tratamento para entrada de char
 
     public static void main(String[] args) throws Exception {
 
@@ -52,12 +53,19 @@ public class Main {
 
         for(String item : MainTokenizer.getEntradaSplit()){
             try{
+                // tratamento para número
                 Integer.parseInt(item);
                 String[] digitos = item.split("");
                 entradaSplit.addAll(Arrays.asList(digitos));
 
             }catch(NumberFormatException e){
-                entradaSplit.add(item);
+                // tratamento para char
+                if(item.contains("'")){
+                    String[] shar = item.split("");
+                    entradaSplit.addAll(Arrays.asList(shar));
+                }else{
+                    entradaSplit.add(item);
+                }
             }
         }
         System.out.println(entradaSplit);
