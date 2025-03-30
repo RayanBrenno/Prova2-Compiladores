@@ -1,3 +1,5 @@
+import Tokenizador.MainTokenizer;
+
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
@@ -7,11 +9,12 @@ import java.util.*;
 public class Main {
     public static void main(String[] args) throws Exception {
 
-        // teste intellij
+        MainTokenizer.principal();
 
         File file = new File("src/glcFinal.txt");
         String code = lerTXT(file.getAbsolutePath());
         String[] codeSplitado = code.split("\n");
+
         Map<String, String[]> grammarRules = gerarDicionario(codeSplitado);
         Map<String, Set<String>> first = gerarFirst(grammarRules);
 
@@ -20,7 +23,7 @@ public class Main {
             System.out.println(entry.getKey() + " -> " + new TreeSet<>(entry.getValue()));
         }
 
-        System.out.println("");
+        System.out.println();
 
         System.out.println("FOLLOW:");
         Map<String, Set<String>> follow = gerarFollow(grammarRules, first);
@@ -28,16 +31,39 @@ public class Main {
             System.out.println(entry.getKey() + " -> " + new TreeSet<>(entry.getValue()));
         }
 
-        System.out.println("");
+        System.out.println();
 
-        
         System.out.println("Tabela Preditiva:");
         Map<String, Map<String, String>> tabela = gerarTabelaPreditiva(grammarRules, first, follow);
         imprimirTabelaPreditiva(tabela);
-        String entrada = "int c = 0 ;";
-        boolean resultado = analisarEntrada(entrada, tabela, "S");
+
+        String entrada = MainTokenizer.getEntrada();
+        ArrayList<String> entradaSplit = MainTokenizer.getEntradaSplit();
+
+        boolean resultado = analisarEntrada(entradaSplit, tabela, "S");
         System.out.println("\n Resultado da analise para '" + entrada + "': " + (resultado ? "ACEITA" : "REJEITADA "));
-        
+
+    }
+
+    public static Map<String, String[]> gerarDicionario(String[] codeSplitado) {
+        Map<String, String[]> grammarRules = new LinkedHashMap<>();
+
+        for (String line : codeSplitado) {
+            String[] parts = line.split("->");
+            if (parts[1].contains("|")) {
+                String[] parts2 = parts[1].split("\\|");
+                String[] aux = new String[parts2.length];
+                for (int i = 0; i < parts2.length; i++) {
+                    aux[i] = parts2[i].trim();
+                }
+                grammarRules.put(parts[0].trim(), aux);
+            } else {
+                String[] aux = new String[1];
+                aux[0] = parts[1].trim();
+                grammarRules.put(parts[0].trim(), aux);
+            }
+        }
+        return grammarRules;
     }
 
     public static Map<String, Set<String>> gerarFirst(Map<String, String[]> grammarRules) {
@@ -178,12 +204,12 @@ public class Main {
         return tabela;
     }
 
-    public static boolean analisarEntrada(String entrada, Map<String, Map<String, String>> tabela, String simboloInicial) {
+    public static boolean analisarEntrada(ArrayList<String> entrada, Map<String, Map<String, String>> tabela, String simboloInicial) {
         Stack<String> pilha = new Stack<>();
         pilha.push("$");
         pilha.push(simboloInicial);
 
-        List<String> tokens = new ArrayList<>(Arrays.asList(entrada.trim().split("\\s+")));
+        List<String> tokens = new ArrayList<>(entrada);
         tokens.add("$");
 
         int index = 0;
@@ -236,27 +262,6 @@ public class Main {
             System.out.println("Erro ao ler o arquivo: " + e.getMessage());
             return "";
         }
-    }
-
-    public static Map<String, String[]> gerarDicionario(String[] codeSplitado) {
-        Map<String, String[]> grammarRules = new LinkedHashMap<>();
-
-        for (String line : codeSplitado) {
-            String[] parts = line.split("->");
-            if (parts[1].contains("|")) {
-                String[] parts2 = parts[1].split("\\|");
-                String[] aux = new String[parts2.length];
-                for (int i = 0; i < parts2.length; i++) {
-                    aux[i] = parts2[i].trim();
-                }
-                grammarRules.put(parts[0].trim(), aux);
-            } else {
-                String[] aux = new String[1];
-                aux[0] = parts[1].trim();
-                grammarRules.put(parts[0].trim(), aux);
-            }
-        }
-        return grammarRules;
     }
 
 }

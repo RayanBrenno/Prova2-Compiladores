@@ -48,7 +48,7 @@ public class Passos {
 
                 if (!current.equals(" ")) {
                     if (i + 1 < code.length()) {
-                        String auxRelacionaisGrandes = current + String.valueOf(code.charAt(i + 1));
+                        String auxRelacionaisGrandes = current + code.charAt(i + 1);
                         if (dicSimbolos.keySet().contains(auxRelacionaisGrandes)) {
                             if (verificacaoNaoExiste(tabelaDeSimbolos, auxRelacionaisGrandes)) {
                                 tabelaDeSimbolos.put(String.valueOf(id++), new Tokenizer(auxRelacionaisGrandes, dicSimbolos.get(auxRelacionaisGrandes), "-"));
