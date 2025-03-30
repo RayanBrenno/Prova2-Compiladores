@@ -7,6 +7,16 @@ import java.nio.file.Paths;
 import java.util.*;
 
 public class Main {
+//
+//    29/03
+//    ALTERAÇÕES:
+//
+//    gerarFollow
+//    pegarNextElement não precisa mais
+//    linha 274 (gerarTabela)
+//    MainTokenizer
+//    entrada para a pilha foi alterada → números passados por cada dígito (134 → 1,3,4)
+
     public static void main(String[] args) throws Exception {
 
         MainTokenizer.principal();
@@ -36,10 +46,22 @@ public class Main {
         System.out.println("Tabela Preditiva:");
         Map<String, Map<String, String>> tabela = gerarTabelaPreditiva(grammarRules, first, follow);
         imprimirTabelaPreditiva(tabela);
-
+        // ↓
         String entrada = MainTokenizer.getEntrada();
-        ArrayList<String> entradaSplit = MainTokenizer.getEntradaSplit();
+        ArrayList<String> entradaSplit = new ArrayList<>();
 
+        for(String item : MainTokenizer.getEntradaSplit()){
+            try{
+                Integer.parseInt(item);
+                String[] digitos = item.split("");
+                entradaSplit.addAll(Arrays.asList(digitos));
+
+            }catch(NumberFormatException e){
+                entradaSplit.add(item);
+            }
+        }
+        System.out.println(entradaSplit);
+        // ↑
         boolean resultado = analisarEntrada(entradaSplit, tabela, "S");
         System.out.println("\n Resultado da analise para '" + entrada + "': " + (resultado ? "ACEITA" : "REJEITADA "));
 
@@ -95,72 +117,133 @@ public class Main {
             return first;
     }
 
+//    public static Map<String, Set<String>> gerarFollow(Map<String, String[]> grammarRules, Map<String, Set<String>> first) {
+//        Map<String, Set<String>> follow = new LinkedHashMap<>();
+//        for (String key : grammarRules.keySet()) {
+//            follow.put(key, new HashSet<>());
+//        }
+//
+//        String startSymbol = "S";
+//        follow.get(startSymbol).add("$");
+//
+//        boolean changed;
+//        do {
+//            changed = false;
+//            for (Map.Entry<String, String[]> entry : grammarRules.entrySet()) {
+//                String key = entry.getKey();
+//                for (Map.Entry<String, String[]> entry2 : grammarRules.entrySet()) {
+//                    String key2 = entry2.getKey();
+//                    String[] values2 = entry2.getValue();
+//
+//                    for (String value : values2) {
+//                        String nextElement = pegarNextElement(value, key);
+//
+//                        if (nextElement.equals("-1"))
+//                            continue;
+//
+//                        Set<String> toAdd = new HashSet<>();
+//                        if (!nextElement.equals("")) {
+//                            if (grammarRules.containsKey(nextElement)) {
+//                                Set<String> firstNext = new HashSet<>(first.get(nextElement));
+//                                if (firstNext.contains("#")) {
+//                                    firstNext.remove("#");
+//                                    toAdd.addAll(firstNext);
+//                                    toAdd.addAll(follow.get(key2)); // Regra 3
+//                                } else {
+//                                    toAdd.addAll(firstNext); // Regra 2
+//                                }
+//                            } else {
+//                                toAdd.add(nextElement); // terminal direto
+//                            }
+//                        } else {
+//                            if (!key.equals(key2)) {
+//                                toAdd.addAll(follow.get(key2)); // Regra 3 (fim da produção)
+//                            }
+//                        }
+//                        if (follow.get(key).addAll(toAdd)) {
+//                            changed = true;
+//                        }
+//                    }
+//                }
+//            }
+//        } while (changed);
+//        return follow;
+//    }
+
     public static Map<String, Set<String>> gerarFollow(Map<String, String[]> grammarRules, Map<String, Set<String>> first) {
         Map<String, Set<String>> follow = new LinkedHashMap<>();
-        for (String key : grammarRules.keySet()) {
-            follow.put(key, new HashSet<>());
+
+        for (String nt : grammarRules.keySet()) {
+            follow.put(nt, new HashSet<>());
         }
 
-        String startSymbol = "S";
-        follow.get(startSymbol).add("$");
+        String simboloInicial = "S";
+        follow.get(simboloInicial).add("$");
 
-        boolean changed;
+        boolean mudou;
+
         do {
-            changed = false;
-            for (Map.Entry<String, String[]> entry : grammarRules.entrySet()) {
-                String key = entry.getKey();
-                for (Map.Entry<String, String[]> entry2 : grammarRules.entrySet()) {
-                    String key2 = entry2.getKey();
-                    String[] values2 = entry2.getValue();
+            mudou = false;
 
-                    for (String value : values2) {
-                        String nextElement = pegarNextElement(value, key);
+            for (Map.Entry<String, String[]> regra : grammarRules.entrySet()) {
+                String A = regra.getKey(); // Exemplo: Tipo_expr
+                for (String producao : regra.getValue()) {
+                    String[] simbolos = producao.trim().split("\\s+");
 
-                        if (nextElement.equals("-1")) 
-                            continue;
+                    for (int i = 0; i < simbolos.length; i++) {
+                        String B = simbolos[i];
+                        if (!grammarRules.containsKey(B)) continue; // só não-terminais têm FOLLOW
 
-                        Set<String> toAdd = new HashSet<>();
-                        if (!nextElement.equals("")) {
-                            if (grammarRules.containsKey(nextElement)) {
-                                Set<String> firstNext = new HashSet<>(first.get(nextElement));
-                                if (firstNext.contains("#")) {
-                                    firstNext.remove("#");
-                                    toAdd.addAll(firstNext);
-                                    toAdd.addAll(follow.get(key2)); // Regra 3
-                                } else {
-                                    toAdd.addAll(firstNext); // Regra 2
-                                }
+                        boolean epsilonEmTudo = true;
+
+                        for (int j = i + 1; j < simbolos.length; j++) {
+                            String beta = simbolos[j];
+
+                            Set<String> firstBeta = new HashSet<>();
+                            if (grammarRules.containsKey(beta)) {
+                                firstBeta.addAll(first.get(beta));
                             } else {
-                                toAdd.add(nextElement); // terminal direto
+                                firstBeta.add(beta); // terminal direto
                             }
-                        } else {
-                            if (!key.equals(key2)) {
-                                toAdd.addAll(follow.get(key2)); // Regra 3 (fim da produção)
+
+                            boolean adicionou = follow.get(B).addAll(
+                                    firstBeta.stream().filter(s -> !s.equals("#")).toList()
+                            );
+                            if (adicionou) mudou = true;
+
+                            if (!firstBeta.contains("#")) {
+                                epsilonEmTudo = false;
+                                break;
                             }
                         }
-                        if (follow.get(key).addAll(toAdd)) {
-                            changed = true;
+
+                        if (i == simbolos.length - 1 || epsilonEmTudo) {
+                            if (follow.get(B).addAll(follow.get(A))) {
+                                mudou = true;
+                            }
                         }
                     }
                 }
             }
-        } while (changed);
+
+        } while (mudou);
+
         return follow;
     }
-
-    public static String pegarNextElement(String value, String key) {
-        String[] tokens = value.trim().split("\\s+");
-        for (int i = 0; i < tokens.length; i++) {
-            if (tokens[i].equals(key)) {
-                if (i + 1 >= tokens.length) {
-                    return ""; // fim da produção
-                } else {
-                    return tokens[i + 1];
-                }
-            }
-        }
-        return "-1"; // não encontrado
-    }
+//
+//    public static String pegarNextElement(String value, String key) {
+//        String[] tokens = value.trim().split("\\s+");
+//        for (int i = 0; i < tokens.length; i++) {
+//            if (tokens[i].equals(key)) {
+//                if (i + 1 >= tokens.length) {
+//                    return ""; // fim da produção
+//                } else {
+//                    return tokens[i + 1];
+//                }
+//            }
+//        }
+//        return "-1"; // não encontrado
+//    }
 
     public static Map<String, Map<String, String>> gerarTabelaPreditiva(Map<String, String[]> grammarRules, Map<String, Set<String>> first, Map<String, Set<String>> follow) {
 
@@ -195,7 +278,7 @@ public class Main {
                 // Se FIRST(α) contém ε, usar FOLLOW(A)
                 if (firstProducao.contains("#")) {
                     for (String terminal : follow.get(naoTerminal)) {
-                        tabela.get(naoTerminal).put(terminal, "#");
+                        tabela.get(naoTerminal).put(terminal, producao);
                     }
                 }
             }
@@ -222,8 +305,10 @@ public class Main {
             } else if (!tabela.containsKey(topo)) {
                 System.out.println("Erro: símbolo inesperado '" + atual + "'");
                 return false;
-            } else {
+            }else{
+
                 String producao = tabela.get(topo).get(atual);
+
                 if (producao == null) {
                     System.out.println("Erro: nenhuma produção para [" + topo + "][" + atual + "]");
                     return false;
@@ -239,7 +324,7 @@ public class Main {
 
         return index == tokens.size();
     }
-    
+
     public static void imprimirTabelaPreditiva(Map<String, Map<String, String>> tabela) {
         System.out.println("TABELA LL(1)");
         System.out.println("-".repeat(40));
