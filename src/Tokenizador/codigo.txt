@@ -1,11 +1,10 @@
-int a = 134;
-int b 2 = 23;
-char e = 'b';
-char f = 15555;
+ int abc = 134;
+ int b = 23;
 
-if(e == 'b')
+ if(b > 30)
     int c = b + a;
-if(a >= 100) {
+
+ if(a > 100) {
     int c = a - b;
     int d = a * a + c;
-}
+ } 

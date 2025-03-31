@@ -19,8 +19,8 @@ public class Passos {
                 put(")", "SYM_PARFECHA");
                 put("{", "SYM_CHAVEABRE");
                 put("}", "SYM_CHAVEFECHA");
-                put(">", "SYM_MENOR");
-                put("<", "SYM_MAIOR");
+                put(">", "SYM_MAIOR");
+                put("<", "SYM_MENOR");
                 put("<=", "SYM_MENORIGUAL");
                 put(">=", "SYM_MAIORIGUAL");
                 put("==", "SYM_IGUALDADE");

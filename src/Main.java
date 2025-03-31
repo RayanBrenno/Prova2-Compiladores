@@ -25,6 +25,7 @@ public class Main {
     public static void main(String[] args) throws Exception {
 
         MainTokenizer.principal();
+        System.out.println(Arrays.toString(MainTokenizer.getCodeTokenizado()));
 
         File file = new File("src/glcFinal.txt");
         String code = lerTXT(file.getAbsolutePath());
@@ -51,11 +52,19 @@ public class Main {
         System.out.println("Tabela Preditiva:");
         Map<String, Map<String, String>> tabela = gerarTabelaPreditiva(grammarRules, first, follow);
         imprimirTabelaPreditiva(tabela);
-        // ↓
+        tratarEntrada(tabela);
+
+    }
+
+    public static void tratarEntrada(Map<String, Map<String, String>> tabela){
         String entrada = MainTokenizer.getEntrada();
         ArrayList<String> entradaSplit = new ArrayList<>();
+        ArrayList<String> entrySplit = MainTokenizer.getEntradaSplit();
+        String[] codeTokenizado = MainTokenizer.getCodeTokenizado();
+        System.out.println(entrySplit.size()+" "+ codeTokenizado.length);
 
-        for(String item : MainTokenizer.getEntradaSplit()){
+        for(int i = 0; i < entrySplit.size(); i++){
+            String item = entrySplit.get(i);
             try{
                 // tratamento para número
                 Integer.parseInt(item);
@@ -63,8 +72,13 @@ public class Main {
                 entradaSplit.addAll(Arrays.asList(digitos));
 
             }catch(NumberFormatException e){
-                // tratamento para char
-                if(item.contains("'")){
+                // tratamento para id's com mais de um caracter → "abc"
+                if(codeTokenizado[i].contains("<ID,") && !item.equals("if")){
+                    String[] caracteres = item.split("");
+                    entradaSplit.addAll(Arrays.asList(caracteres));
+
+                    // tratamento para char
+                }else if(item.contains("'")){
                     String[] shar = item.split("");
                     entradaSplit.addAll(Arrays.asList(shar));
                 }else{
@@ -73,10 +87,9 @@ public class Main {
             }
         }
         System.out.println(entradaSplit);
-        // ↑
+
         boolean resultado = analisarEntrada(entradaSplit, tabela, "S");
         System.out.println("\n Resultado da analise para '" + entrada + "': " + (resultado ? "ACEITA" : "REJEITADA "));
-
     }
 
     public static Map<String, String[]> gerarDicionario(String[] codeSplitado) {
@@ -312,6 +325,7 @@ public class Main {
         while (!pilha.isEmpty()) {
             String topo = pilha.pop();
             String atual = tokens.get(index);
+            System.out.println(topo+" - "+atual);
 
             if (topo.equals(atual)) {
                 index++;
