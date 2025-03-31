@@ -22,7 +22,7 @@ public class Main {
 //    ALTERAÇÕES:
 //    agr aceita char = numero(0-10) sem aspas q eh o certo, mudou glc linha 17
 
-    public static void main(String[] args) throws Exception {
+    public static void main(String[] args){
 
         MainTokenizer.principal();
         System.out.println(Arrays.toString(MainTokenizer.getCodeTokenizado()));
@@ -34,7 +34,7 @@ public class Main {
         Map<String, String[]> grammarRules = gerarDicionario(codeSplitado);
         Map<String, Set<String>> first = gerarFirst(grammarRules);
 
-        System.out.println("FIRST:");
+        System.out.println("\nFIRST:");
         for (Map.Entry<String, Set<String>> entry : first.entrySet()) {
             System.out.println(entry.getKey() + " -> " + new TreeSet<>(entry.getValue()));
         }
@@ -54,42 +54,6 @@ public class Main {
         imprimirTabelaPreditiva(tabela);
         tratarEntrada(tabela);
 
-    }
-
-    public static void tratarEntrada(Map<String, Map<String, String>> tabela){
-        String entrada = MainTokenizer.getEntrada();
-        ArrayList<String> entradaSplit = new ArrayList<>();
-        ArrayList<String> entrySplit = MainTokenizer.getEntradaSplit();
-        String[] codeTokenizado = MainTokenizer.getCodeTokenizado();
-        System.out.println(entrySplit.size()+" "+ codeTokenizado.length);
-
-        for(int i = 0; i < entrySplit.size(); i++){
-            String item = entrySplit.get(i);
-            try{
-                // tratamento para número
-                Integer.parseInt(item);
-                String[] digitos = item.split("");
-                entradaSplit.addAll(Arrays.asList(digitos));
-
-            }catch(NumberFormatException e){
-                // tratamento para id's com mais de um caracter → "abc"
-                if(codeTokenizado[i].contains("<ID,") && !item.equals("if")){
-                    String[] caracteres = item.split("");
-                    entradaSplit.addAll(Arrays.asList(caracteres));
-
-                    // tratamento para char
-                }else if(item.contains("'")){
-                    String[] shar = item.split("");
-                    entradaSplit.addAll(Arrays.asList(shar));
-                }else{
-                    entradaSplit.add(item);
-                }
-            }
-        }
-        System.out.println(entradaSplit);
-
-        boolean resultado = analisarEntrada(entradaSplit, tabela, "S");
-        System.out.println("\n Resultado da analise para '" + entrada + "': " + (resultado ? "ACEITA" : "REJEITADA "));
     }
 
     public static Map<String, String[]> gerarDicionario(String[] codeSplitado) {
@@ -149,7 +113,7 @@ public class Main {
 //            follow.put(key, new HashSet<>());
 //        }
 //
-//        String startSymbol = "S";
+//        String startSymbol = "inicial";
 //        follow.get(startSymbol).add("$");
 //
 //        boolean changed;
@@ -203,7 +167,7 @@ public class Main {
             follow.put(nt, new HashSet<>());
         }
 
-        String simboloInicial = "S";
+        String simboloInicial = "inicial";
         follow.get(simboloInicial).add("$");
 
         boolean mudou;
@@ -313,6 +277,40 @@ public class Main {
         return tabela;
     }
 
+    public static void tratarEntrada(Map<String, Map<String, String>> tabela){
+        String entrada = MainTokenizer.getEntrada();
+        ArrayList<String> entradaSplit = new ArrayList<>();
+        ArrayList<String> entrySplit = MainTokenizer.getEntradaSplit();
+        String[] codeTokenizado = MainTokenizer.getCodeTokenizado();
+
+        for(int i = 0; i < entrySplit.size(); i++){
+            String item = entrySplit.get(i);
+            try{
+                // tratamento para número
+                Integer.parseInt(item);
+                String[] digitos = item.split("");
+                entradaSplit.addAll(Arrays.asList(digitos));
+
+            }catch(NumberFormatException e){
+                // tratamento para id's com mais de um caracter → "abc"
+                if(codeTokenizado[i].contains("<ID,") && !item.equals("if")){
+                    String[] caracteres = item.split("");
+                    entradaSplit.addAll(Arrays.asList(caracteres));
+
+                    // tratamento para char
+                }else if(item.contains("'")){
+                    String[] shar = item.split("");
+                    entradaSplit.addAll(Arrays.asList(shar));
+                }else{
+                    entradaSplit.add(item);
+                }
+            }
+        }
+
+        boolean resultado = analisarEntrada(entradaSplit, tabela, "inicial");
+        System.out.println("\n Resultado da analise para '" + entrada + "': " + (resultado ? "ACEITA" : "REJEITADA "));
+    }
+
     public static boolean analisarEntrada(ArrayList<String> entrada, Map<String, Map<String, String>> tabela, String simboloInicial) {
         Stack<String> pilha = new Stack<>();
         pilha.push("$");
@@ -325,7 +323,6 @@ public class Main {
         while (!pilha.isEmpty()) {
             String topo = pilha.pop();
             String atual = tokens.get(index);
-            System.out.println(topo+" - "+atual);
 
             if (topo.equals(atual)) {
                 index++;

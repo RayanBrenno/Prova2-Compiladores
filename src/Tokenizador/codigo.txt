@@ -1,7 +1,7 @@
- int abc = 134;
+ int a = 134;
  int b = 23;
 
- if(b > 30)
+ if(b == 'b')
     int c = b + a;
 
  if(a > 100) {

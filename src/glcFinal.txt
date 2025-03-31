@@ -1,4 +1,4 @@
-S -> Declaracao ; S | Condicional S | Atribuicao ; S | # 
+inicial -> Declaracao ; inicial | Condicional inicial | Atribuicao ; inicial | #
 
 Declaracao -> int Lista_var_int | char Lista_var_char
 Lista_var_int -> Var Lista_var_prime_int
@@ -35,7 +35,8 @@ Eq -> Eq_prefixo Eq_sufixo
 Eq_prefixo -> Operando | ( Eq )
 Eq_sufixo -> Operador Eq | #
 
-Operando -> Constante | Var  
+Operando -> Constante | Var | ' Operando_extra '
+Operando_extra -> Const | Var
 
 Caractere -> Numero Caractere_num_opcao | Letra Caractere_letra_opcao | #
 Caractere_num_opcao -> Caractere
@@ -55,4 +56,4 @@ Comando2 -> Declaracao ; | Atribuicao ; | Condicional Comando2
 Relacional -> == | <= | >= | != | === | !== | > | <
 Operador -> + | - | * | /  
 Numero -> 0 | 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9
-Letra -> a | b | c | d | e | f | g | h | i | j | k | l | m | n | o | p | q | r | s | t | u | v | w | x | y | z 
+Letra -> a | b | c | d | e | f | g | h | i | j | k | l | m | n | o | p | q | r | s | t | u | v | w | x | y | z | A | B | C | D | E | F | G | H | I | J | K | L | M | N | O | P | Q | R | S | T | U | V | W | X | Y | Z
