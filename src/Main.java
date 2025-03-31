@@ -81,21 +81,22 @@ public class Main {
 
     public static Map<String, String[]> gerarDicionario(String[] codeSplitado) {
         Map<String, String[]> grammarRules = new LinkedHashMap<>();
-
         for (String line : codeSplitado) {
-            String[] parts = line.split("->");
-            if (parts[1].contains("|")) {
-                String[] parts2 = parts[1].split("\\|");
-                String[] aux = new String[parts2.length];
-                for (int i = 0; i < parts2.length; i++) {
-                    aux[i] = parts2[i].trim();
-                }
-                grammarRules.put(parts[0].trim(), aux);
-            } else {
-                String[] aux = new String[1];
-                aux[0] = parts[1].trim();
-                grammarRules.put(parts[0].trim(), aux);
+            line = line.trim();
+            if (line.isEmpty()) {
+                continue;
             }
+            String[] parts = line.split("->");
+            if (parts.length < 2) {
+                System.err.println("Erro: Linha inválida -> " + line);
+                continue;
+            }
+            String naoTerminal = parts[0].trim();
+            String[] producoes = parts[1].split("\\|");
+            for (int i = 0; i < producoes.length; i++) {
+                producoes[i] = producoes[i].trim();
+            }
+            grammarRules.put(naoTerminal, producoes);
         }
         return grammarRules;
     }
