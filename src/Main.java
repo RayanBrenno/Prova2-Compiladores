@@ -18,6 +18,10 @@ public class Main {
 //    entrada para a pilha foi alterada → números passados por cada dígito (134 → 1,3,4)
 //    tratamento para entrada de char
 
+//    31/03
+//    ALTERAÇÕES:
+//    agr aceita char = numero(0-10) sem aspas q eh o certo, mudou glc linha 17
+
     public static void main(String[] args) throws Exception {
 
         MainTokenizer.principal();

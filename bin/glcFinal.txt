@@ -14,7 +14,7 @@ Lista_var_continuacao_prime_char -> Lista_var_resto_char | = Expr_char Lista_var
 Atribuicao -> Var = Expr_tipo
 Expr_tipo -> Expr_int | Expr_char
 Expr_int -> Expr_prefixo Expr_sufixo
-Expr_char -> ' Expr_char_continuacao '
+Expr_char -> ' Expr_char_continuacao ' | Const
 Expr_char_continuacao -> Num | Letra
 Expr_prefixo -> Const | Var | ( Eq )
 Expr_sufixo -> Operador Eq | #
